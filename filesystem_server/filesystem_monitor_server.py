@@ -26,13 +26,13 @@ for line in ret:
     profiles[line['uuid']] = (line['windows'], line['name'], line['profile'], line['allocation'])
 
 
-files_list = [] # 单虚拟节点文件监控列表
-files_dict = {} # 全虚拟节点文件监控字典，键为虚拟机id
+files_list = []         # 暂存单个虚拟机的文件：             [fn1,fn2,...]
+files_dict = {}         # 所有虚拟机的文件，键为虚拟机id：    {uuid：[fn1,fn2,...], ...}
 
-registry_dict = {} # 单虚拟机注册表字典
-registries_dict = {} # 全虚拟节点注册表监控字典，键为虚拟机id
+registry_dict = {}      # 暂存单个虚拟机注册表：             {path: [(name,type,value), ..], ...}
+registries_dict = {}    # 存储所有虚拟机注册表，键为虚拟机id：{uuid: {path:[(name,type,value), ..], ...}，...}
 
-# 全局变量存储文件监控列表
+# 读取监控linux的文件列表
 for (uuid,(win,name,profile,allocation)) in profiles.items():
     files_list = [] 
     ret = db.select('monitor_file_list',where="`uuid`='%s'" % uuid)
@@ -42,10 +42,12 @@ for (uuid,(win,name,profile,allocation)) in profiles.items():
 
 
 
-# 队列用于一生产者多消费者的情况
+# 队列存放windows虚拟机某时刻的注册表文件名
 q = Queue.Queue(maxsize = 5)
 
-
+#挂载虚拟机文件到本地，并区分linux和windows作不同处理；
+#win：都将注册表复制到registry文件夹，并以uid_time_SYSTEM命名
+#linux：获取文件的内容
 class file_mount(threading.Thread):
     def __init__(self, uuid, allocation, win, name):
         super(file_mount, self).__init__()
@@ -60,6 +62,7 @@ class file_mount(threading.Thread):
         global q
         cmd = 'qemu-nbd -c /dev/%s /var/lib/libvirt/images/%s.img' % (self.allocation,self.name)
         os.popen(cmd)
+        #将虚拟机文件挂载到本地
         if self.win == 0:
             cmd = 'mount /dev/%sp1 /tmp/%s' % (self.allocation, self.uuid)
             os.popen(cmd)
@@ -75,6 +78,7 @@ class file_mount(threading.Thread):
                 logger.debug(cmd+' '+res)
             except:
                 continue
+            #比较文件内容是否变化
             file_mount_change(self.uuid, monitor_file, res)
 
         # 注册表打印
@@ -86,6 +90,7 @@ class file_mount(threading.Thread):
             cmd = 'mv registry/SYSTEM registry/%s' % (registrypath)
             os.popen(cmd)
 
+            #放入队列，registry线程取出
             q.put(registrypath)
             logger.debug(registrypath)
 
@@ -95,7 +100,7 @@ class file_mount(threading.Thread):
         cmd = 'qemu-nbd -d /dev/%s' % (self.allocation)
         os.popen(cmd)
 
-
+#比较注册表变化，从队列q中取出注册表名：uid_time_SYSTEM
 class registry(threading.Thread):
     def __init__(self):
         super(registry, self).__init__()
@@ -116,8 +121,10 @@ class registry(threading.Thread):
             md5_new = GetFileMd5('registry/%s' % registry_name)
 
             ret = db.select(table, where="`uuid`='%s' and `registry`='%s'" % (uuid, registry))
+            #没有此虚拟机的注册表记录，直接存入
             if len(ret) == 0:
                 registry_dict = {}
+                #
                 registry_analyze('registry/%s' % registry_name)
                 db.insert(table,uuid = uuid,
                         registry= registry,
@@ -125,11 +132,14 @@ class registry(threading.Thread):
                         md5 = md5_new
                         )
                 registries_dict[uuid] = registry_dict
+            #有则比较MD5值是否变化
             else:
                 registry_dict = {}
                 md5_old = list(ret)[0]['md5']
                 if md5_old != md5_new:
+                    #先获取当前的注册表信息，存入字典registry_dict
                     registry_analyze('registry/%s' % registry_name)
+                    #再与之前的注册表registries_dict[uuid]信息比较
                     compare(uuid, registry, registry_dict, registries_dict[uuid])
 
                     # 更新数据库hash值
@@ -146,14 +156,14 @@ class registry(threading.Thread):
             logger.debug('rm success')
 
 
-
+#获取注册表内容
 def registry_analyze(filename):
     if not os.path.isfile(filename):
         return
     reg = Registry.Registry(filename)
     rec(reg.root())
 
-
+#递归获取注册表树型结构，并将其以字典键值对的方式存储:{path:[(name,type,value), ..], ...}
 def rec(key):
     global registry_dict
     element_list = []
@@ -166,7 +176,7 @@ def rec(key):
     for subkey in key.subkeys():
         rec(subkey)
 
-
+#比较注册表变化，并将变化写入数据库
 def compare(uuid, registry, old_dict, new_dict):
     table = 'registry_change'
     for k,v in new_dict.items():
@@ -185,7 +195,7 @@ def compare(uuid, registry, old_dict, new_dict):
                             time = ctime,
                             )
 
-
+#通过计算MD5值比较文件内容是否变化，monitor_file为文件名，res为文件现在的内容
 def file_mount_change(uuid, monitor_file, res):
     logger.debug("file_mount_change start!")
     table = 'monitor_file_change'
@@ -197,7 +207,7 @@ def file_mount_change(uuid, monitor_file, res):
 
     filepath = monitor_file.split('/')[-1]
     filepath = 'files/%s_%s_%s' % (uuid, ctime, filepath)
-
+    #之前没记录，直接存入数据库
     if len(ret) == 0:
         db.insert(table, uuid = uuid,
                         filename = monitor_file,
@@ -209,6 +219,7 @@ def file_mount_change(uuid, monitor_file, res):
         file_object.write(res)
         file_object.close( )
     	logger.debug('no record:\tsize:'+size+'filepath:'+filepath+'\tres:'+res)
+    #否则，比较md5值，不同则存入数据库
     else:
         md5_old = list(ret)[0]['md5']
         if md5_old != md5_new:
@@ -224,7 +235,7 @@ def file_mount_change(uuid, monitor_file, res):
 	#logger.debug('update:'+list(ret)[0]['time']+'\tsize:'+size+'filepath:'+filepath+'\tres:'+res)
     logger.debug(ctime + ' ' + uuid+ ' ' + filepath + ' '+res)
 
-
+#启动file_mount线程
 class mount_thread(threading.Thread):
     def __init__(self, uuid, allocation, win, name):
         super(mount_thread, self).__init__()
@@ -242,7 +253,7 @@ class mount_thread(threading.Thread):
             t.join()
             time.sleep(5)
 
-
+#启动registry线程
 class registry_thread(threading.Thread):
     def __init__(self):
         super(registry_thread, self).__init__()
