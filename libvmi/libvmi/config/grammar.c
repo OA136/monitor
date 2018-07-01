@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.2"
+#define YYBISON_VERSION "3.0.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -434,7 +434,7 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
+
 union YYSTYPE
 {
 #line 266 "grammar.y" /* yacc.c:355  */
@@ -443,6 +443,8 @@ union YYSTYPE
 
 #line 445 "grammar.c" /* yacc.c:355  */
 };
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -456,7 +458,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 460 "grammar.c" /* yacc.c:358  */
+#line 462 "grammar.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -1621,7 +1623,7 @@ yyreduce:
             free((yyvsp[-3].str));
             entry_done();
         }
-#line 1625 "grammar.c" /* yacc.c:1646  */
+#line 1627 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 33:
@@ -1633,7 +1635,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1637 "grammar.c" /* yacc.c:1646  */
+#line 1639 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 34:
@@ -1645,7 +1647,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1649 "grammar.c" /* yacc.c:1646  */
+#line 1651 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 35:
@@ -1657,7 +1659,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1661 "grammar.c" /* yacc.c:1646  */
+#line 1663 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 36:
@@ -1669,7 +1671,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1673 "grammar.c" /* yacc.c:1646  */
+#line 1675 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 37:
@@ -1681,7 +1683,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1685 "grammar.c" /* yacc.c:1646  */
+#line 1687 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 38:
@@ -1690,7 +1692,7 @@ yyreduce:
             fprintf(stderr, "VMI_WARNING: linux_addr is no longer used and should be removed from your config file\n");
             free((yyvsp[0].str));
         }
-#line 1694 "grammar.c" /* yacc.c:1646  */
+#line 1696 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 39:
@@ -1702,7 +1704,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1706 "grammar.c" /* yacc.c:1646  */
+#line 1708 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 40:
@@ -1714,7 +1716,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1718 "grammar.c" /* yacc.c:1646  */
+#line 1720 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 41:
@@ -1726,7 +1728,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1730 "grammar.c" /* yacc.c:1646  */
+#line 1732 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 42:
@@ -1738,7 +1740,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1742 "grammar.c" /* yacc.c:1646  */
+#line 1744 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 43:
@@ -1750,7 +1752,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1754 "grammar.c" /* yacc.c:1646  */
+#line 1756 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 44:
@@ -1762,7 +1764,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1766 "grammar.c" /* yacc.c:1646  */
+#line 1768 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 45:
@@ -1774,7 +1776,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1778 "grammar.c" /* yacc.c:1646  */
+#line 1780 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 46:
@@ -1786,7 +1788,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1790 "grammar.c" /* yacc.c:1646  */
+#line 1792 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 47:
@@ -1798,7 +1800,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1802 "grammar.c" /* yacc.c:1646  */
+#line 1804 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 48:
@@ -1810,7 +1812,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1814 "grammar.c" /* yacc.c:1646  */
+#line 1816 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 49:
@@ -1822,7 +1824,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1826 "grammar.c" /* yacc.c:1646  */
+#line 1828 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 50:
@@ -1834,7 +1836,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1838 "grammar.c" /* yacc.c:1646  */
+#line 1840 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 51:
@@ -1846,7 +1848,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1850 "grammar.c" /* yacc.c:1646  */
+#line 1852 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 52:
@@ -1858,7 +1860,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1862 "grammar.c" /* yacc.c:1646  */
+#line 1864 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 53:
@@ -1870,7 +1872,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1874 "grammar.c" /* yacc.c:1646  */
+#line 1876 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 54:
@@ -1882,7 +1884,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-2].str), tmp_ptr);
             free((yyvsp[0].str));
         }
-#line 1886 "grammar.c" /* yacc.c:1646  */
+#line 1888 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 55:
@@ -1893,7 +1895,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-4].str), sysmap_path);
             free((yyvsp[-1].str));
         }
-#line 1897 "grammar.c" /* yacc.c:1646  */
+#line 1899 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 56:
@@ -1904,7 +1906,7 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-4].str), rekall_profile);
             free((yyvsp[-1].str));
         }
-#line 1908 "grammar.c" /* yacc.c:1646  */
+#line 1910 "grammar.c" /* yacc.c:1646  */
     break;
 
   case 57:
@@ -1915,11 +1917,11 @@ yyreduce:
             g_hash_table_insert(tmp_entry, (yyvsp[-4].str), os_type_str);
             free((yyvsp[-1].str));
         }
-#line 1919 "grammar.c" /* yacc.c:1646  */
+#line 1921 "grammar.c" /* yacc.c:1646  */
     break;
 
 
-#line 1923 "grammar.c" /* yacc.c:1646  */
+#line 1925 "grammar.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

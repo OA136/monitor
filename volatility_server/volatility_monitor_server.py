@@ -48,7 +48,7 @@ class linux_ifconfig(threading.Thread):
         
     def run(self):
         (win, name, profile, allocation) = profiles[self.uuid]
-        cmd = 'python vol.py -l vmi://%s --profile=%s linux_ifconfig' % (name, profile)
+        cmd = 'python volatility/vol.py -l vmi://%s --profile=%s linux_ifconfig' % (name, profile)
         res = os.popen(cmd).read()
 
         ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())

@@ -25,11 +25,11 @@ vm status monitor base on libvirt
 
 
 需要配置宿主机ssh远程登录免密码
-	对于客户机：
+	对于客户机（即运行采集系统的主机）：
 		a、在用户家目录下公私钥：ssh-keygen 文件在$HOME/.ssh/目录下
 		b、将公钥传递到远程服务器：ssh-copy-id -i $HOME/.ssh/id_rsa.pub -p 22 user@host 
 		c、输入密码即可添加成功，之后可以免密登录
-	对于远程宿主机：
+	对于远程宿主机（虚拟机所在的主机）：
 		需要重新配置ssh配置文件/etc/ssh/sshd_config，把配置文件中的
 			"PermitRootLogin without-password" 修改为 "PermitRootLogin yes，
 		去除	AuthorizedKeysFile     %h/.ssh/authorized_keys 这句的注释；

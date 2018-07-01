@@ -65,7 +65,7 @@
 #define HAVE_LIBRT 1
 
 /* Define to 1 if you have <qemu/libvmi_request.h>. */
-#define HAVE_LIBVMI_REQUEST 1
+/* #undef HAVE_LIBVMI_REQUEST */
 
 /* Define to 1 to enable Xenstore support. */
 /* #undef HAVE_LIBXENSTORE */
@@ -112,8 +112,7 @@
 /* Define for the i386 architecture. */
 /* #undef I386 */
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
 
 /* Max number of pages held in page cache */
