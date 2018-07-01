@@ -2,6 +2,7 @@
 
 
 
+
 主要通过qemu-ndb将虚拟机的文件系统挂在到本地目录下，从而进行信息采集监控：
 	vm-windows：主要监控注册表的变化，将变化存入到数据库表registry_change中
 	vm-ubuntu:  根据表monitor_file_list中定义的文件，对其进行监控，并将变化的记录存入到表monitor_file_change中

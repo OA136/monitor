@@ -33,7 +33,7 @@ cloud_result_table = 'cloud_result_in_row'
 
 interval_check_peroid = 1
 interval_travelsal_libvirtd = 20
-host_list = ["192.168.75.136"]
+host_list = hosts_list
 current_time = datetime.datetime.now()
 
 queue_host_list = Queue.Queue()  #put hostlist here
@@ -77,6 +77,7 @@ def daemonize (stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
 
 
 #libvirt client: actually do some work
+#获取虚拟机的mem、rx、cpu，并放入队列queue_result中：result： {uuid：{mem：40%，cpu：20%，rx：14567}，...}
 def multi_host_libvirt_check(host_dict):
     for host in host_dict:
         try:
@@ -294,6 +295,7 @@ def multi_host_libvirt_check(host_dict):
         conn.close()
 
 #read uuids from remote libvirtd and store them to database
+#从宿主机获取虚拟机的信息并将其存入到cloud_vhost中
 class thread_read_host_list(threading.Thread):
     def __init__(self):
         super(thread_read_host_list, self).__init__()
@@ -331,6 +333,7 @@ class thread_read_host_list(threading.Thread):
                 time.sleep(interval_travelsal_libvirtd)
 
 #read host list from db (table cloud_vhost)
+#从数据库中获取宿主机IP，并将其放入队列queue_host_list中：host_dict: {host:[v1, v2, ...], ...}
 class thread_get_host_list_from_db(threading.Thread):
     def __init__(self):
         super(thread_get_host_list_from_db, self).__init__()
@@ -360,6 +363,7 @@ class thread_get_host_list_from_db(threading.Thread):
             time.sleep(interval_check_peroid)
 
 # checker thread
+#获取queue_host_list，并调用multi_host_libvirt_check
 class thread_do_check(threading.Thread):
     def __init__(self):
         super(thread_do_check, self).__init__()
@@ -374,6 +378,7 @@ class thread_do_check(threading.Thread):
                 logger.exception(e)
 
 #store result to database
+#获取queue_result，并存入数据库表cloud_result_in_row中
 class thread_update_db(threading.Thread):
     def __init__(self):
         super(thread_update_db, self).__init__()

@@ -8,6 +8,8 @@ db_username = 'root'
 db_password ='123456'
 db_database = 'test'
 
+#需要采集虚拟机信息所在的宿主机列表
+hosts_list = ["192.168.75.136"]
 # API端口配置
 api_server_port = 9898
 
