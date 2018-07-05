@@ -9,7 +9,3 @@ vm status monitor base on volatility
 	windows：
 		lsmod、plist
 
-必要步骤：
-	需要将安装编译好的libvmi拷贝到monitor目录下，即当前目录的父目录下
-	将volatility考入到当前文件夹下
-	因为需要用到libvmi（采集win）和volatility（采集linux）

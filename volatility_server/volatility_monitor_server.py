@@ -48,7 +48,7 @@ class linux_ifconfig(threading.Thread):
         
     def run(self):
         (win, name, profile, allocation) = profiles[self.uuid]
-        cmd = 'python volatility/vol.py -l vmi://%s --profile=%s linux_ifconfig' % (name, profile)
+        cmd = 'python ../../volatility/vol.py -l vmi://%s --profile=%s linux_ifconfig' % (name, profile)
         res = os.popen(cmd).read()
 
         ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
@@ -90,7 +90,7 @@ class linux_arp(threading.Thread):
 
     def run(self):
         (win, name, profile, allocation) = profiles[self.uuid]
-        cmd = 'python vol.py -l vmi://%s --profile=%s linux_arp' % (name, profile)
+        cmd = 'python ../../volatility/vol.py -l vmi://%s --profile=%s linux_arp' % (name, profile)
         res = os.popen(cmd).read()
         ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         table = 'linux_arp'
@@ -129,7 +129,7 @@ class pslist(threading.Thread):
 
     def run(self):
         (win, name, profile, allocation) = profiles[self.uuid]
-        cmd = './../libvmi/examples/vmi-process-list %s' % (name)
+        cmd = './../../libvmi/examples/process-list %s' % (name)
         res = os.popen(cmd).read()
         ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         if win == 0:
@@ -170,7 +170,7 @@ class lsmod(threading.Thread):
 
     def run(self):
         (win, name, profile, allocation) = profiles[self.uuid]
-        cmd = './../libvmi/examples/vmi-module-list %s' % (name)
+        cmd = './../../libvmi/examples/module-list %s' % (name)
         res = os.popen(cmd).read()
         ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
         if win == 0:
