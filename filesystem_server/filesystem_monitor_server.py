@@ -89,17 +89,18 @@ class file_mount(threading.Thread):
                 if q.qsize() < 5 and self.win == 1:
                     ctime = time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime())
                     registrypath = '%s_%s_SYSTEM' % (self.uuid, ctime)
-                    try:
-		        cmd_cp = 'cp /tmp/%s/Windows/System32/config/SYSTEM registry/' % (self.uuid)
-                        os.popen(cmd_cp)
-                        cmd_mv = 'mv registry/SYSTEM registry/%s' % (registrypath)
-                        os.popen(cmd_mv)
+		    if (os.access('/tmp/%s/Windows/System32/config/SYSTEM' % (self.uuid), os.R_OK)):
+                        try:
+		            cmd_cp = 'cp /tmp/%s/Windows/System32/config/SYSTEM registry/' % (self.uuid)
+                            os.popen(cmd_cp)
+                            cmd_mv = 'mv registry/SYSTEM registry/%s' % (registrypath)
+                            os.popen(cmd_mv)
 
-                        #放入队列，registry线程取出
-                        q.put(registrypath)
-                        logger.debug(registrypath)
-		    except:
-                        logger.debug(cmd_cp + "== or ==" + cmd_mv + "is error")
+                            #放入队列，registry线程取出
+                            q.put(registrypath)
+                            logger.debug(registrypath)
+		        except:
+                            logger.debug(cmd_cp + "== or ==" + cmd_mv + "is error")
 	    except:
                 logger.debug("mount windows error!")
         cmd = 'umount /tmp/%s' % (self.uuid)
@@ -148,7 +149,7 @@ class registry(threading.Thread):
                     registry_analyze('registry/%s' % registry_name)
                     #再与之前的注册表registries_dict[uuid]信息比较
 		    try:
-                    	compare(uuid, registry, registry_dict, registries_dict[uuid])
+                    	compare(uuid, registry, registries_dict[uuid], registry_dict)
 		    except:
 			logger.debug('compare is error!')
                     # 更新数据库hash值
@@ -197,12 +198,23 @@ def compare(uuid, registry, old_dict, new_dict):
                     value_type = element_tuple[1]
                     ctime = time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime())
                     db.insert(table,uuid = uuid,
-                            registry = registry,
+                            registry = regisitry,
                             path = k,
                             key_name = name,
                             key_type = value_type,
                             time = ctime,
                             )
+      else:
+          for element_tuple in v:
+              ctime = time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime())
+	      db.insert(table,uuid = uuid,
+                      registry = registry,
+                      path = k,
+                      key_name = element_tuple[0],
+                      key_type = element_tuple[1],
+                      time = ctime,
+                      )
+
 
 #通过计算MD5值比较文件内容是否变化，monitor_file为文件名，res为文件现在的内容
 def file_mount_change(uuid, monitor_file, res):
