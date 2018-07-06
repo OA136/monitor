@@ -64,37 +64,44 @@ class file_mount(threading.Thread):
         os.popen(cmd)
         #将虚拟机文件挂载到本地
         if self.win == 0:
-            cmd = 'mount /dev/%sp1 /tmp/%s' % (self.allocation, self.uuid)
-            os.popen(cmd)
-        else:
-            cmd = 'mount /dev/%sp2 /tmp/%s' % (self.allocation, self.uuid)
-            os.popen(cmd)
-
-        monitor_file_list = files_dict[self.uuid]
-        for monitor_file in monitor_file_list:
-            cmd = 'cat /tmp/%s%s' % (self.uuid, monitor_file)
             try:
-                res = os.popen(cmd).read()
-                logger.debug(cmd+' '+res)
-            except:
-                continue
-            #比较文件内容是否变化
-            file_mount_change(self.uuid, monitor_file, res)
+                cmd = 'mount /dev/%sp1 /tmp/%s' % (self.allocation, self.uuid)
+                os.popen(cmd)
+	        monitor_file_list = files_dict[self.uuid]
+                for monitor_file in monitor_file_list:
+		    if (os.access('/tmp/%s%s' % (self.uuid, monitor_file), os.R_OK)):
+                        cmd = 'cat /tmp/%s%s' % (self.uuid, monitor_file)
+                        try:
+                            res = os.popen(cmd).read()
+   		            #比较文件内容是否变化
+                            file_mount_change(self.uuid, monitor_file, res)
+                            logger.debug(cmd+' '+res)
+                        except:
+                            continue
+	    except:
+		logger.debug("mount linux error!")
+        else:
+	    try:
+                cmd = 'mount /dev/%sp2 /tmp/%s' % (self.allocation, self.uuid)
+                os.popen(cmd)
 
-        # 注册表打印
-        if q.qsize() < 5 and self.win == 1:
-            ctime = time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime())
-            registrypath = '%s_%s_SYSTEM' % (self.uuid, ctime)
-            cmd = 'cp /tmp/%s/Windows/System32/config/SYSTEM registry/' % (self.uuid)
-            os.popen(cmd)
-            cmd = 'mv registry/SYSTEM registry/%s' % (registrypath)
-            os.popen(cmd)
+                # 注册表打印
+                if q.qsize() < 5 and self.win == 1:
+                    ctime = time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime())
+                    registrypath = '%s_%s_SYSTEM' % (self.uuid, ctime)
+                    try:
+		        cmd_cp = 'cp /tmp/%s/Windows/System32/config/SYSTEM registry/' % (self.uuid)
+                        os.popen(cmd_cp)
+                        cmd_mv = 'mv registry/SYSTEM registry/%s' % (registrypath)
+                        os.popen(cmd_mv)
 
-            #放入队列，registry线程取出
-            q.put(registrypath)
-            logger.debug(registrypath)
-
-
+                        #放入队列，registry线程取出
+                        q.put(registrypath)
+                        logger.debug(registrypath)
+		    except:
+                        logger.debug(cmd_cp + "== or ==" + cmd_mv + "is error")
+	    except:
+                logger.debug("mount windows error!")
         cmd = 'umount /tmp/%s' % (self.uuid)
         os.popen(cmd)
         cmd = 'qemu-nbd -d /dev/%s' % (self.allocation)
@@ -140,8 +147,10 @@ class registry(threading.Thread):
                     #先获取当前的注册表信息，存入字典registry_dict
                     registry_analyze('registry/%s' % registry_name)
                     #再与之前的注册表registries_dict[uuid]信息比较
-                    compare(uuid, registry, registry_dict, registries_dict[uuid])
-
+		    try:
+                    	compare(uuid, registry, registry_dict, registries_dict[uuid])
+		    except:
+			logger.debug('compare is error!')
                     # 更新数据库hash值
                     db.update(table,where="`uuid`='%s' and `registry`='%s'" % (uuid, registry),
                         md5 = md5_new,
