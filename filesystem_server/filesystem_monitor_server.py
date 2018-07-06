@@ -101,6 +101,8 @@ class file_mount(threading.Thread):
                             logger.debug(registrypath)
 		        except:
                             logger.debug(cmd_cp + "== or ==" + cmd_mv + "is error")
+	            else:
+		        logger.debug('/tmp/%s/Windows/System32/config/SYSTEM is not accesss!' % self.uuid)
 	    except:
                 logger.debug("mount windows error!")
         cmd = 'umount /tmp/%s' % (self.uuid)
@@ -214,7 +216,6 @@ def compare(uuid, registry, old_dict, new_dict):
                       key_type = element_tuple[1],
                       time = ctime,
                       )
-
 
 #通过计算MD5值比较文件内容是否变化，monitor_file为文件名，res为文件现在的内容
 def file_mount_change(uuid, monitor_file, res):
